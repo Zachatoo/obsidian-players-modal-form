@@ -1,5 +1,6 @@
-import { MarkdownView, Plugin } from "obsidian";
+import { MarkdownView, Plugin, TFile } from "obsidian";
 import { PlayersModal } from "./PlayersModal";
+import { Player } from "./Player";
 
 export default class PlayersModalFormPlugin extends Plugin {
 	async onload() {
@@ -30,6 +31,13 @@ export default class PlayersModalFormPlugin extends Plugin {
 			if (!(markdownView instanceof MarkdownView) || !markdownView.file)
 				return;
 			new PlayersModal(this.app, markdownView.file).open();
+		});
+	}
+
+	async openModal(file: TFile | null) {
+		if (!file || !(file instanceof TFile)) return;
+		return new Promise<Player[] | undefined>((resolve) => {
+			new PlayersModal(this.app, file, resolve).open();
 		});
 	}
 }

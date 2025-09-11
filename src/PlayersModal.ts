@@ -5,9 +5,13 @@ import { PersonInputSuggest } from "./PersonInputSuggest";
 export class PlayersModal extends Modal {
 	private file: TFile;
 	private players: Player[] = [];
-	constructor(app: App, file: TFile) {
+	private cb?: (data?: Player[]) => void;
+	private isSaved = false;
+
+	constructor(app: App, file: TFile, cb?: (data?: Player[]) => void) {
 		super(app);
 		this.file = file;
+		if (cb instanceof Function) this.cb = cb;
 	}
 
 	onOpen() {
@@ -156,17 +160,26 @@ export class PlayersModal extends Modal {
 				return player;
 			})
 			.filter((player) => Object.keys(player).length > 0);
-		await this.app.fileManager.processFrontMatter(
-			this.file,
-			(frontmatter) => {
-				frontmatter.players = cleanPlayers;
-			}
-		);
+		if (this.cb instanceof Function) {
+			this.cb(cleanPlayers);
+			this.isSaved = true;
+		} else {
+			await this.app.fileManager.processFrontMatter(
+				this.file,
+				(frontmatter) => {
+					frontmatter.players = cleanPlayers;
+				}
+			);
+			this.isSaved = true;
+		}
 		this.close();
 	}
 
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+		if (!this.isSaved && this.cb instanceof Function) {
+			this.cb();
+		}
 	}
 }
