@@ -1,11 +1,15 @@
 export type Player = {
 	/** Name or link */
 	name: string;
+	/** Whether the player is the winner or on the winning team */
+	won?: boolean;
 	score?: number;
 	/** Team or faction */
 	team?: string;
 	/** Player order position (1-based index) */
 	position?: number;
+	/** Whether this is the first time this player has played this game */
+	firstTimePlayer?: boolean;
 };
 
 export function isPlayer(obj: unknown): obj is Player {

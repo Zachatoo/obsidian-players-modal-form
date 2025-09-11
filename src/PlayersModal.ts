@@ -62,6 +62,18 @@ export class PlayersModal extends Modal {
 				});
 
 			new Setting(playerDiv)
+				.setName("Won")
+				.setDesc(
+					"Whether the player is the winner or on the winning team."
+				)
+				.addToggle((toggle) => {
+					toggle.setValue(player.won ?? false);
+					toggle.onChange((value) => {
+						player.won = value;
+					});
+				});
+
+			new Setting(playerDiv)
 				.setName("Score")
 				.setDesc("Enter player score.")
 				.addText((text) => {
@@ -93,6 +105,18 @@ export class PlayersModal extends Modal {
 					});
 				});
 
+			new Setting(playerDiv)
+				.setName("First time player")
+				.setDesc(
+					"Whether this is the first time this player has played this game."
+				)
+				.addToggle((toggle) => {
+					toggle.setValue(player.firstTimePlayer ?? false);
+					toggle.onChange((value) => {
+						player.firstTimePlayer = value;
+					});
+				});
+
 			new Setting(playerDiv).addButton((btn) =>
 				btn
 					.setButtonText("Add player below")
@@ -120,7 +144,12 @@ export class PlayersModal extends Modal {
 		const cleanPlayers = this.players
 			.map((player) => {
 				Object.entries(player).forEach(([key, value]) => {
-					if (value === undefined || value === null || value === "") {
+					if (
+						value === undefined ||
+						value === null ||
+						value === "" ||
+						value === false
+					) {
 						delete player[key as keyof Player];
 					}
 				});
