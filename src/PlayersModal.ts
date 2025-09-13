@@ -12,6 +12,12 @@ export class PlayersModal extends Modal {
 		super(app);
 		this.file = file;
 		if (cb instanceof Function) this.cb = cb;
+		this.scope.register(["Mod"], "N", (evt) => {
+			this.addPlayer();
+		});
+		this.scope.register(["Mod"], "S", (evt) => {
+			this.save();
+		});
 	}
 
 	onOpen() {
@@ -126,21 +132,7 @@ export class PlayersModal extends Modal {
 					.setButtonText("Add player below")
 					.setCta()
 					.onClick(() => {
-						this.players.splice(index + 1, 0, { name: "" });
-						this.buildForm();
-
-						const playerEntries =
-							this.contentEl.querySelectorAll(".player-entry");
-						const newPlayerEntry = playerEntries[index + 1];
-						if (newPlayerEntry) {
-							const nameInput =
-								newPlayerEntry.querySelector(
-									'input[type="text"]'
-								);
-							if (nameInput instanceof HTMLInputElement) {
-								nameInput.focus();
-							}
-						}
+						this.addPlayer(index + 1);
 					})
 			);
 		});
@@ -155,6 +147,22 @@ export class PlayersModal extends Modal {
 		new ButtonComponent(buttonContainer)
 			.setButtonText("Cancel")
 			.onClick(() => this.close());
+	}
+
+	private addPlayer(index?: number) {
+		if (index === undefined) index = this.players.length;
+		this.players.splice(index, 0, { name: "" });
+		this.buildForm();
+
+		const playerEntries = this.contentEl.querySelectorAll(".player-entry");
+		const newPlayerEntry = playerEntries[index];
+		if (newPlayerEntry) {
+			const nameInput =
+				newPlayerEntry.querySelector('input[type="text"]');
+			if (nameInput instanceof HTMLInputElement) {
+				nameInput.focus();
+			}
+		}
 	}
 
 	async save() {
