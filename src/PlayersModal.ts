@@ -128,6 +128,19 @@ export class PlayersModal extends Modal {
 					.onClick(() => {
 						this.players.splice(index + 1, 0, { name: "" });
 						this.buildForm();
+
+						const playerEntries =
+							this.contentEl.querySelectorAll(".player-entry");
+						const newPlayerEntry = playerEntries[index + 1];
+						if (newPlayerEntry) {
+							const nameInput =
+								newPlayerEntry.querySelector(
+									'input[type="text"]'
+								);
+							if (nameInput instanceof HTMLInputElement) {
+								nameInput.focus();
+							}
+						}
 					})
 			);
 		});
