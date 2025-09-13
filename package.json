@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-players-modal-form",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"description": "Allows editing nested YAML for the players object for logging plays.",
 	"main": "main.js",
 	"scripts": {
