@@ -1,7 +1,7 @@
 {
 	"id": "players-modal-form",
 	"name": "Players modal form",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"minAppVersion": "1.4.0",
 	"description": "Allows editing nested YAML for the players object for logging plays.",
 	"author": "Zachatoo",
