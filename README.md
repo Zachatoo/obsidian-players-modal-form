@@ -2,6 +2,8 @@
 
 Personal plugin for managing players for a logged play session in my vault. I do not currently have plans to expand this to be usable for other use cases.
 
+<img width="523" height="521" alt="image" src="https://github.com/user-attachments/assets/33c571e5-95af-4979-bada-7fc9288aa5eb" />
+
 ## Contributing
 
 ### Releasing new releases
