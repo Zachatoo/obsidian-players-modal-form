@@ -3,7 +3,8 @@ export type Player = {
 	name: string;
 	/** Whether the player is the winner or on the winning team */
 	won?: boolean;
-	score?: number;
+	/** Score, could be a number (34) or a string (Gold) */
+	score?: number | string;
 	/** Team or faction */
 	team?: string;
 	/** Player order position (1-based index) */
@@ -15,7 +16,8 @@ export type Player = {
 export function isPlayer(obj: unknown): obj is Player {
 	if (typeof obj !== "object" || obj === null) return false;
 	if (!("name" in obj) || typeof obj.name !== "string") return false;
-	if ("score" in obj && typeof obj.score !== "number") return false;
+	if ("score" in obj && !["number", "string"].includes(typeof obj.score))
+		return false;
 	if ("team" in obj && typeof obj.team !== "string") return false;
 	if ("position" in obj && typeof obj.position !== "number") return false;
 	return true;

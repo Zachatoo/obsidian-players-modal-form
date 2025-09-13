@@ -87,10 +87,13 @@ export class PlayersModal extends Modal {
 				.setName("Score")
 				.setDesc("Enter player score.")
 				.addText((text) => {
-					text.inputEl.type = "number";
 					text.setValue(player.score?.toString() ?? "");
 					text.onChange((value) => {
-						player.score = parseInt(value);
+						if (!isNaN(Number(value))) {
+							player.score = Number(value);
+						} else {
+							player.score = value;
+						}
 					});
 				});
 
@@ -111,7 +114,12 @@ export class PlayersModal extends Modal {
 					text.inputEl.type = "number";
 					text.setValue(player.position?.toString() ?? "");
 					text.onChange((value) => {
-						player.position = parseInt(value);
+						const number = parseInt(value);
+						if (!isNaN(number)) {
+							player.position = number;
+						} else {
+							player.position = undefined;
+						}
 					});
 				});
 
