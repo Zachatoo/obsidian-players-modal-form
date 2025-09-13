@@ -1,4 +1,11 @@
-import { App, ButtonComponent, Modal, Setting, TFile } from "obsidian";
+import {
+	App,
+	ButtonComponent,
+	MarkdownView,
+	Modal,
+	Setting,
+	TFile,
+} from "obsidian";
 import { parsePlayers, Player } from "./Player";
 import { PersonInputSuggest } from "./PersonInputSuggest";
 
@@ -199,6 +206,19 @@ export class PlayersModal extends Modal {
 					frontmatter.players = cleanPlayers;
 				}
 			);
+			try {
+				const activeView =
+					this.app.workspace.getActiveViewOfType(MarkdownView);
+				if (
+					activeView?.file?.path === this.file.path &&
+					activeView.metadataEditor?.onMetadataTypeChange instanceof
+						Function
+				) {
+					activeView.metadataEditor.onMetadataTypeChange("players");
+				}
+			} catch {
+				// Do nothing
+			}
 			this.isSaved = true;
 		}
 		this.close();

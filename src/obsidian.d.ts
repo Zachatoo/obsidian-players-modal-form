@@ -9,4 +9,10 @@ declare module "obsidian" {
 			alias?: string;
 		}[];
 	}
+
+	interface MarkdownView {
+		metadataEditor?: {
+			onMetadataTypeChange?: (type: string) => void;
+		};
+	}
 }
