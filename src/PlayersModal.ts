@@ -3,7 +3,7 @@ import {
 	ButtonComponent,
 	MarkdownView,
 	Modal,
-	Setting,
+	SettingGroup,
 	TFile,
 } from "obsidian";
 import { parsePlayers, Player } from "./Player";
@@ -47,13 +47,12 @@ export class PlayersModal extends Modal {
 		contentEl.empty();
 
 		this.players.forEach((player, index) => {
-			const playerDiv = contentEl.createDiv({ cls: "player-entry" });
+			const playerGroup = new SettingGroup(contentEl)
+				.setHeading(`Player ${index + 1}`)
+				.addClass("player-entry");
 
-			const heading = new Setting(playerDiv)
-				.setName(`Player ${index + 1}`)
-				.setHeading();
 			if (this.players.length > 1) {
-				heading.addButton((btn) => {
+				playerGroup.addExtraButton((btn) => {
 					btn.setTooltip("Remove")
 						.setIcon("trash")
 						.onClick(() => {
@@ -63,97 +62,113 @@ export class PlayersModal extends Modal {
 				});
 			}
 
-			new Setting(playerDiv)
-				.setName("Name")
-				.setDesc("Enter player name, supports plain text or a link.")
-				.addText((text) => {
-					text.setValue(player.name);
-					new PersonInputSuggest(
-						this.app,
-						text.inputEl,
-						this.file.path
-					);
-					text.onChange((value) => {
-						player.name = value;
+			playerGroup.addSetting((setting) => {
+				setting
+					.setName("Name")
+					.setDesc(
+						"Enter player name, supports plain text or a link.",
+					)
+					.addText((text) => {
+						text.setValue(player.name);
+						new PersonInputSuggest(
+							this.app,
+							text.inputEl,
+							this.file.path,
+						);
+						text.onChange((value) => {
+							player.name = value;
+						});
 					});
-				});
+			});
 
-			new Setting(playerDiv)
-				.setName("Won")
-				.setDesc(
-					"Whether the player is the winner or on the winning team."
-				)
-				.addToggle((toggle) => {
-					toggle.setValue(player.won ?? false);
-					toggle.onChange((value) => {
-						player.won = value;
+			playerGroup.addSetting((setting) => {
+				setting
+					.setName("Won")
+					.setDesc(
+						"Whether the player is the winner or on the winning team.",
+					)
+					.addToggle((toggle) => {
+						toggle.setValue(player.won ?? false);
+						toggle.onChange((value) => {
+							player.won = value;
+						});
 					});
-				});
+			});
 
-			new Setting(playerDiv)
-				.setName("Score")
-				.setDesc("Enter player score.")
-				.addText((text) => {
-					text.setValue(player.score?.toString() ?? "");
-					text.onChange((value) => {
-						if (!isNaN(Number(value))) {
-							player.score = Number(value);
-						} else {
-							player.score = value;
-						}
+			playerGroup.addSetting((setting) => {
+				setting
+					.setName("Score")
+					.setDesc("Enter player score.")
+					.addText((text) => {
+						text.setValue(player.score?.toString() ?? "");
+						text.onChange((value) => {
+							if (!isNaN(Number(value))) {
+								player.score = Number(value);
+							} else {
+								player.score = value;
+							}
+						});
 					});
-				});
+			});
 
-			new Setting(playerDiv)
-				.setName("Team")
-				.setDesc("Enter team or faction name.")
-				.addText((text) => {
-					text.setValue(player.team ?? "");
-					text.onChange((value) => {
-						player.team = value;
+			playerGroup.addSetting((setting) => {
+				setting
+					.setName("Team")
+					.setDesc("Enter team or faction name.")
+					.addText((text) => {
+						text.setValue(player.team ?? "");
+						text.onChange((value) => {
+							player.team = value;
+						});
 					});
-				});
+			});
 
-			new Setting(playerDiv)
-				.setName("Position")
-				.setDesc("Enter player order position.")
-				.addText((text) => {
-					text.inputEl.type = "number";
-					text.setValue(player.position?.toString() ?? "");
-					text.onChange((value) => {
-						const number = parseInt(value);
-						if (!isNaN(number)) {
-							player.position = number;
-						} else {
-							player.position = undefined;
-						}
+			playerGroup.addSetting((setting) => {
+				setting
+					.setName("Position")
+					.setDesc("Enter player order position.")
+					.addText((text) => {
+						text.inputEl.type = "number";
+						text.setValue(player.position?.toString() ?? "");
+						text.onChange((value) => {
+							const number = parseInt(value);
+							if (!isNaN(number)) {
+								player.position = number;
+							} else {
+								player.position = undefined;
+							}
+						});
 					});
-				});
+			});
 
-			new Setting(playerDiv)
-				.setName("First time player")
-				.setDesc(
-					"Whether this is the first time this player has played this game."
-				)
-				.addToggle((toggle) => {
-					toggle.setValue(player.firstTimePlayer ?? false);
-					toggle.onChange((value) => {
-						player.firstTimePlayer = value;
+			playerGroup.addSetting((setting) => {
+				setting
+					.setName("First time player")
+					.setDesc(
+						"Whether this is the first time this player has played this game.",
+					)
+					.addToggle((toggle) => {
+						toggle.setValue(player.firstTimePlayer ?? false);
+						toggle.onChange((value) => {
+							player.firstTimePlayer = value;
+						});
 					});
-				});
+			});
 
-			new Setting(playerDiv).addButton((btn) =>
-				btn
-					.setButtonText("Add player below")
-					.setCta()
-					.onClick(() => {
-						this.addPlayer(index + 1);
-					})
-			);
+			playerGroup.addSetting((setting) => {
+				setting.addButton((btn) =>
+					btn
+						.setButtonText("Add player below")
+						.setCta()
+						.onClick(() => {
+							this.addPlayer(index + 1);
+						}),
+				);
+			});
 		});
 
 		const buttonContainer = this.contentEl.createDiv(
-			"modal-button-container"
+			"modal-button-container",
 		);
 		new ButtonComponent(buttonContainer)
 			.setButtonText("Save")
@@ -204,7 +219,7 @@ export class PlayersModal extends Modal {
 				this.file,
 				(frontmatter) => {
 					frontmatter.players = cleanPlayers;
-				}
+				},
 			);
 			try {
 				const activeView =
